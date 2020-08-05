@@ -91,7 +91,7 @@ def main():
         if step > 80:
             step = 0
         screen.blit(my_dino.image, my_dino.rect) # This, combined with the 2 lines above it, draw the dinosaur in its new position and erases it from its previous position
-        pygame.display.flip()
+        pygame.display.update(my_dino.rect)
     pygame.quit()
 
 if __name__ == "__main__":
