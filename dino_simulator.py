@@ -45,23 +45,42 @@ class Dino(pygame.sprite.Sprite):
                 self.speed[1] = - self.speed[1]
         newpos = self.rect.move(self.speed)
         self.rect = newpos
+    def checkCollision(self, sprite1, sprite2):
+        """Checks if dino sprite and food sprite are touching, and if so, reverses the dino's direction"""
+        col = pygame.sprite.collide_rect(sprite1, sprite2)
+        if col == True:
+            if step != 40 and step != 80:
+                self.speed[0] = - self.speed[0]
+                self.speed[1] = - self.speed[1]
+                self.image = pygame.transform.flip(self.image, 1, 0)
+                
+                
+class Food(pygame.sprite.Sprite):
+    """A food source that the dinosaur can collide with and use to eat when it's hunger meter gets low enough"""
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(image_file).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
 
 
 def main():
+    # Initialises pygame and screen and creates an instance of the Dino class and Food class
     pygame.init()
     screen = pygame.display.set_mode([1000, 600])
     screen.fill([255, 255, 255])
     clock = pygame.time.Clock()
     my_dino = Dino("dino_model.png", [5, 7], [400, 130])
+    dino_food = Food("food.png", [300, 340])
     global step
     step = 0
 
-
+    # Creates the background surface on which to draw everything else, fills background white,
+    # and draws the food and enclosure onto the background
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((255, 255, 255))
-
-    # Draws the enclosure onto the background
+    background.blit(dino_food.image, dino_food.rect)
     enclosure = pygame.draw.rect(background, [0, 0, 0], (180, 60, 640, 480), 5)
 
     # Displays the title on the background
@@ -87,6 +106,7 @@ def main():
         pygame.time.delay(300)
         screen.blit(background, (0, 0))
         my_dino.move()
+        my_dino.checkCollision(my_dino, dino_food)
         step += 1
         if step > 80:
             step = 0
